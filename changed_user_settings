@@ -1,0 +1,5 @@
+{
+    // orgmode resolvers
+    "orgmode.open_link.resolver.local_file.pattern":"^(?:.*?\\[\\[)?(?P<filepath>.+?)(?::(?P<row>.+?)(?::(?P<col>\\d+))?)?(?:\\]*)$",
+
+}
