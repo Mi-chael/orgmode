@@ -8,7 +8,7 @@ from .abstract import AbstractRegexLinkResolver
 DEFAULT_OPEN_PROMPT_LINK_COMMANDS = dict(
     darwin=['open', '-a', 'Terminal'],
     win32=['cmd'],
-    linux=['gnome-terminal'],
+    linux=['konsole'],
 )
 
 
@@ -16,7 +16,7 @@ PATTERN_SETTING = 'orgmode.open_link.resolver.prompt.pattern'
 PATTERN_DEFAULT = r'^(cmd:|prompt:)(?P<path>.+)$'
 PROMPT_SETTING = 'orgmode.open_link.resolver.prompt.path'
 PROMPT_DEFAULT_WIN32 = '%s'
-PROMPT_DEFAULT_LINUX = '--working-directory=%s'
+PROMPT_DEFAULT_LINUX = '--workdir=%s'
 
 
 class Resolver(AbstractRegexLinkResolver):

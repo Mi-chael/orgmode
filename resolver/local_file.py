@@ -24,6 +24,8 @@ class Resolver(AbstractLinkResolver):
         super(Resolver, self).__init__(view)
         get = self.settings.get
         pattern = get(PATTERN_SETTING, PATTERN_DEFAULT)
+        print('pattern:', pattern)
+        self.number = re.compile(r'\d+')
         self.regex = re.compile(pattern)
         self.force_load_patterns = get(FORCE_LOAD_SETTING, FORCE_LOAD_DEFAULT)
 
@@ -49,7 +51,6 @@ class Resolver(AbstractLinkResolver):
     def expand_path(self, filepath):
         filepath = os.path.expandvars(filepath)
         filepath = os.path.expanduser(filepath)
-
         match = self.regex.match(filepath)
         if match:
             filepath, row, col = match.group(
@@ -66,14 +67,24 @@ class Resolver(AbstractLinkResolver):
                 filepath = testfile
 
         filepath = ''.join([drive, filepath]) if drive else filepath
-        print('filepath: ' + filepath)
+    
+        search = None
         if not self.file_is_excluded(filepath):
             if row:
-                filepath += ':%s' % row
-            if col:
-                filepath += ':%s' % col
+                if self.number.match(row):
+                    filepath += ':%s' % row
+                    if col:
+                        filepath += ':%s' % col
+                else:
+                    search = row
             print('file_is_excluded')
-            self.view.window().open_file(filepath, sublime.ENCODED_POSITION)
+            new_view = self.view.window().open_file(filepath, sublime.ENCODED_POSITION)
+            if search:
+                row = row.replace('*', '\*')
+                Region = new_view.find(row, 0)
+                new_view.sel().clear()
+                new_view.sel().add(sublime.Region(Region.begin(), Region.begin()))
+                new_view.show(Region)
             return True
 
         return filepath
